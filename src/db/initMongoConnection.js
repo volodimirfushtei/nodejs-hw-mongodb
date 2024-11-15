@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI =
-  'mongodb+srv://fuschteyy:lllkkkjjjhhh1978@cluster0.uacgs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 export const initMongoConnection = async () => {
   try {

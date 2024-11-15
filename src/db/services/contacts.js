@@ -7,7 +7,12 @@ export const getAllContacts = async () => {
 };
 
 // Функція для отримання конкретного контакту за ID
-export const getContactById = async (contactId) => {
-  const contact = await MyContacts.findById(contactId); // Знову використовуємо contacts (модель)
-  return contact; // Повертаємо знайдений контакт
-};
+export async function getContactById(contactId) {
+  try {
+    const contact = await MyContacts.findById(contactId); // MongoDB метод для пошуку за ObjectId
+    return contact;
+  } catch (error) {
+    console.error('Error fetching contact by ID:', error);
+    throw new Error('Error fetching contact');
+  }
+}

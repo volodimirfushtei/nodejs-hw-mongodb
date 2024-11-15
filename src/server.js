@@ -13,7 +13,7 @@ export async function setupServer() {
   const app = express();
   const PORT = Number(env('PORT', '3000'));
   await initMongoConnection();
-  // Middleware
+
   app.use(express.json());
   app.use(cors());
   app.use(
@@ -38,25 +38,27 @@ export async function setupServer() {
       });
     }
   });
-  app.get('/contacts/:contactId', async (req, res, next) => {
-    const contactId = req.params.contactId;
+  app.get('/contacts/:contactId', async (req, res) => {
+    const { contactId } = req.params;
 
     try {
       const contact = await getContactById(contactId);
-      if (contact) {
-        res.json({
-          status: 200,
-          message: `Successfully found contact with id ${contactId}!`,
-          data: contact,
-        });
-      } else {
-        res.status(404).json({
+      if (!contact) {
+        return res.status(404).json({
           status: 404,
-          message: 'Contact not found',
+          message: `Contact with ID ${contactId} not found`,
         });
       }
+      res.status(200).json({
+        status: 200,
+        message: `Successfully found contact with id ${contactId}`,
+        data: contact,
+      });
     } catch (error) {
-      next(error);
+      console.error('Error fetching contact:', error);
+      res.status(500).json({
+        message: 'Internal server error',
+      });
     }
   });
 
