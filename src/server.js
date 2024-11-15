@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import pino from 'pino-http';
 import cors from 'cors';
 import dotenv from 'dotenv';
