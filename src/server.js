@@ -40,7 +40,7 @@ export async function setupServer() {
       });
     } catch (error) {
       console.error('Error retrieving contacts:', error);
-      res.status(500).json({
+      res.status(500).send({
         message: 'Error retrieving contacts.',
       });
     }
@@ -49,26 +49,21 @@ export async function setupServer() {
   app.get('/contacts/:contactId', async (req, res) => {
     const { contactId } = req.params;
 
-    try {
-      const contact = await getContactById(contactId);
-      if (!contact) {
-        return res.status(404).json({
-          status: 404,
-          message: 'Contact not found',
-        });
-      }
-      res.status(200).json({
-        status: 200,
-        message: `Successfully found contact with id ${contactId}`,
-        data: contact,
+    const contact = await getContactById(contactId);
+    if (contact === null) {
+      return res.status(404).send({
+        status: 404,
+        message: 'Contact not found',
       });
-    } finally {
-      await mongoose.connection.close();
     }
+    res.status(200).send({
+      status: 200,
+      message: `Successfully found contact with id ${contactId}`,
+      data: contact,
+    });
   });
-
-  app.use((req, res) => {
-    res.status(404).json({
+  app.use((req, res, next) => {
+    res.status(404).send({
       message: 'Route not found',
     });
   });
