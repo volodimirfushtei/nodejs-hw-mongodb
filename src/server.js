@@ -45,8 +45,7 @@ export async function setupServer() {
       const contact = await getContactById(contactId);
       if (!contact) {
         return res.status(404).json({
-          status: 404,
-          message: `Contact with ID ${contactId} not found`,
+          message: 'Contact not found',
         });
       }
       res.status(200).json({
@@ -61,7 +60,6 @@ export async function setupServer() {
       });
     }
   });
-
   app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({
