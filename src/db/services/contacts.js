@@ -1,15 +1,13 @@
-import { MyContacts } from '../models/contacts.js'; // Імпортуємо модель contacts
+import { MyContacts } from '../models/contacts.js';
 
-// Функція для отримання всіх контактів
 export const getAllContacts = async () => {
-  const allContacts = await MyContacts.find(); // Залишаємо contacts (модель) для виконання запиту
-  return allContacts; // Повертаємо всі знайдені контакти
+  const allContacts = await MyContacts.find();
+  return allContacts;
 };
 
-// Функція для отримання конкретного контакту за ID
 export async function getContactById(contactId) {
   try {
-    const contact = await MyContacts.findById(contactId); // MongoDB метод для пошуку за ObjectId
+    const contact = await MyContacts.findById(contactId);
     return contact;
   } catch (error) {
     console.error('Error fetching contact by ID:', error);

@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import pino from 'pino-http';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -52,6 +53,7 @@ export async function setupServer() {
       const contact = await getContactById(contactId);
       if (!contact) {
         return res.status(404).json({
+          status: 404,
           message: 'Contact not found',
         });
       }
@@ -60,11 +62,8 @@ export async function setupServer() {
         message: `Successfully found contact with id ${contactId}`,
         data: contact,
       });
-    } catch (error) {
-      console.error('Error fetching contact:', error);
-      res.status(500).json({
-        message: 'Internal server error',
-      });
+    } finally {
+      await mongoose.connection.close();
     }
   });
 
