@@ -7,7 +7,6 @@ import { getAllContacts, getContactById } from './db/services/contacts.js';
 import { initMongoConnection } from './db/initMongoConnection.js';
 
 dotenv.config();
-
 export async function setupServer() {
   const app = express();
   const PORT = Number(env('PORT', '3000'));
@@ -18,7 +17,6 @@ export async function setupServer() {
     console.error('Failed to connect to MongoDB:', error);
     process.exit(1);
   }
-
   app.use(express.json());
   app.use(cors());
   app.use(
@@ -28,7 +26,6 @@ export async function setupServer() {
       },
     }),
   );
-
   app.get('/contacts', async (req, res) => {
     try {
       const contacts = await getAllContacts();
@@ -44,7 +41,6 @@ export async function setupServer() {
       });
     }
   });
-
   app.get('/contacts/:contactId', async (req, res) => {
     const { contactId } = req.params;
 
@@ -66,7 +62,6 @@ export async function setupServer() {
       message: 'Route not found',
     });
   });
-
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
