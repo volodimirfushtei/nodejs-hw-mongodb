@@ -3,9 +3,10 @@ import pino from 'pino-http';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { env } from './env.js';
-import { getAllContacts, getContactById } from './db/services/contacts.js';
+import contactsRouter from './routers/contacts.js';
 import { initMongoConnection } from './db/initMongoConnection.js';
-
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 dotenv.config();
 export async function setupServer() {
   const app = express();
@@ -17,7 +18,6 @@ export async function setupServer() {
     console.error('Failed to connect to MongoDB:', error);
     process.exit(1);
   }
-  app.use(express.json());
   app.use(cors());
   app.use(
     pino({
@@ -26,42 +26,11 @@ export async function setupServer() {
       },
     }),
   );
-  app.get('/contacts', async (req, res) => {
-    try {
-      const contacts = await getAllContacts();
-      res.status(200).send({
-        status: 200,
-        message: 'Successfully found contacts!',
-        data: contacts,
-      });
-    } catch (error) {
-      console.error('Error retrieving contacts:', error);
-      res.status(500).send({
-        message: 'Error retrieving contacts.',
-      });
-    }
-  });
-  app.get('/contacts/:contactId', async (req, res) => {
-    const { contactId } = req.params;
+  app.use(contactsRouter);
 
-    const contact = await getContactById(contactId);
-    if (contact === null) {
-      return res.status(404).send({
-        status: 404,
-        message: 'Contact not found',
-      });
-    }
-    res.status(200).send({
-      status: 200,
-      message: `Successfully found contact with id ${contactId}`,
-      data: contact,
-    });
-  });
-  app.use((req, res, next) => {
-    res.status(404).send({
-      message: 'Route not found',
-    });
-  });
+  app.use(errorHandler);
+  app.use(notFoundHandler);
+
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
