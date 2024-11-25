@@ -6,7 +6,7 @@ import {
   getContactsByIdController,
   createContactController,
   deleteContactController,
-  patchStudentController,
+  patchContactController,
 } from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 const router = Router();
@@ -18,6 +18,6 @@ router.delete('/contacts/:contactId', ctrlWrapper(deleteContactController));
 router.patch(
   '/contacts/:contactId',
   jsonPars,
-  ctrlWrapper(patchStudentController),
+  ctrlWrapper(patchContactController),
 );
 export default router;

@@ -61,22 +61,28 @@ export async function deleteContactController(req, res) {
   });
   console.log(`Deleted contact with id ${contactId}`);
 }
-export const patchStudentController = async (req, res, next) => {
+export async function patchContactController(req, res, next) {
   const { contactId } = req.params;
-  const contact = {
-    name: req.body.name,
-    phoneNumber: req.body.phoneNumber,
-    email: req.body.email,
-    isFavourite: req.body.isFavourite,
-    contactType: req.body.contactType,
-  };
-  const updatedContact = await updateContact(contactId, contact);
-  if (updatedContact === null) {
-    throw createHttpError(404, 'Contact not found');
+  const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  const contact = {};
+
+  if (name !== undefined) contact.name = name;
+  if (phoneNumber !== undefined) contact.phoneNumber = phoneNumber;
+  if (email !== undefined) contact.email = email;
+  if (isFavourite !== undefined) contact.isFavourite = isFavourite;
+  if (contactType !== undefined) contact.contactType = contactType;
+
+  try {
+    const updatedContact = await updateContact(contactId, contact);
+    if (!updatedContact) {
+      throw createHttpError(404, 'Contact not found');
+    }
+    res.status(200).send({
+      status: 200,
+      message: `Successfully patched a contact!`,
+      data: updatedContact.contact,
+    });
+  } catch (error) {
+    next(error);
   }
-  res.status(200).send({
-    status: 200,
-    message: `Successfully updated contact with id ${contactId}`,
-    data: updatedContact.contact,
-  });
-};
+}

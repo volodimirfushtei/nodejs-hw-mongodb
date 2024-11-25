@@ -16,18 +16,26 @@ export function deleteContact(contactId) {
   return MyContacts.findByIdAndDelete(contactId);
 }
 export const updateContact = async (contactId, payload, options = {}) => {
-  const rawResult = await MyContacts.findOneAndUpdate(
-    { _id: contactId },
-    payload,
-    {
-      new: true,
-      includeResultMetadata: true,
-      ...options,
-    },
-  );
-  if (!rawResult || !rawResult.value) return null;
-  return {
-    contact: rawResult.value,
-    isNew: Boolean(rawResult?.lastErrorObject?.upserted),
-  };
+  try {
+    const rawResult = await MyContacts.findOneAndUpdate(
+      { _id: contactId },
+      { $set: payload },
+      {
+        new: true,
+        returnDocument: 'after',
+        runValidators: true,
+        ...options,
+      },
+    );
+    if (!rawResult) return null;
+    const contactWithoutVersion = rawResult.toObject();
+    delete contactWithoutVersion.__v;
+
+    return {
+      contact: contactWithoutVersion,
+      isNew: Boolean(rawResult.upsertedId),
+    };
+  } catch (error) {
+    throw new Error('Error updating contact: ' + error.message);
+  }
 };
