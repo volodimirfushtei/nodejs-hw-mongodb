@@ -21,7 +21,6 @@ export async function setupServer() {
     process.exit(1);
   }
   app.use(cors());
-
   app.use(
     pino({
       transport: {
