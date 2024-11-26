@@ -7,7 +7,9 @@ import contactsRouter from './routers/contacts.js';
 import { initMongoConnection } from './db/initMongoConnection.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+
 dotenv.config();
+
 export async function setupServer() {
   const app = express();
   const PORT = Number(env('PORT', '3000'));
@@ -19,6 +21,7 @@ export async function setupServer() {
     process.exit(1);
   }
   app.use(cors());
+
   app.use(
     pino({
       transport: {
@@ -26,10 +29,10 @@ export async function setupServer() {
       },
     }),
   );
-  app.use(contactsRouter);
 
+  app.use(contactsRouter);
+  app.use('*', notFoundHandler);
   app.use(errorHandler);
-  app.use(notFoundHandler);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

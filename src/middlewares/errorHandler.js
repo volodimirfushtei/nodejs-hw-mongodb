@@ -1,8 +1,11 @@
+import createHttpError from 'http-errors';
+
 export function errorHandler(err, req, res, next) {
-  console.error(err);
-  res.status(500).send({
-    status: 500,
-    message: 'Something went wrong',
+  if (!err.status) {
+    err = createHttpError(500, 'Something went wrong');
+  }
+  res.status(err.status).send({
+    status: err.status,
     data: err,
   });
 }
