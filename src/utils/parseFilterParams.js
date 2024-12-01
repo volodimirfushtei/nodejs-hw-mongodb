@@ -5,7 +5,7 @@ export function parseFilterParams(query) {
     filters.contactType = contactType;
   }
   if (isFavourite !== undefined) {
-    filters.isFavourite = isFavourite;
+    filters.isFavourite = isFavourite === 'true';
   }
   return filters;
 }

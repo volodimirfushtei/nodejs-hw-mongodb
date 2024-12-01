@@ -19,6 +19,7 @@ export async function getContactsController(req, res) {
     sortOrder,
     filters,
   });
+
   res.status(200).send({
     status: 200,
     message: 'Successfully found contacts!',
