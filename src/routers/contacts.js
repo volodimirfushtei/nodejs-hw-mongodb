@@ -10,7 +10,6 @@ import {
 } from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { isValidId } from '../middlewares/isValidId .js';
-
 import { validateBody } from '../middlewares/validateBody.js';
 import { contactSchema } from '../validation/contact.js';
 import { patchContactSchema } from '../validation/contact.js';

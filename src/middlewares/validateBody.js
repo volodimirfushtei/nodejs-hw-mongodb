@@ -11,9 +11,12 @@ export const validateBody = (schema) => async (req, res, next) => {
   } catch (err) {
     const error = createHttpError(
       400,
-      JSON.stringify('Bad Request', {
-        errors: err.details.map((item) => ({ [item.path]: item.message })),
-      }),
+      JSON.stringify(
+        'Bad Request: lenght mast be with min 3 & max 20 simbols  ',
+        {
+          errors: err.details.map((item) => ({ [item.path]: item.message })),
+        },
+      ),
     );
     next(error);
   }
