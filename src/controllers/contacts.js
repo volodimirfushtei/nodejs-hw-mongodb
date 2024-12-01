@@ -19,7 +19,9 @@ export async function getContactsController(req, res) {
     sortOrder,
     filters,
   });
-
+  if (contacts.length === 0) {
+    throw createHttpError(404, 'No contacts found');
+  }
   res.status(200).send({
     status: 200,
     message: 'Successfully found contacts!',
