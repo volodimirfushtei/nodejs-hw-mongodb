@@ -11,7 +11,7 @@ export async function getAllContacts({
   const contactQuery = MyContacts.find();
 
   if (filters) {
-    contactQuery.where(filters);
+    contactQuery.where(filters || {});
   }
 
   const [totalItems, contacts] = await Promise.all([
@@ -28,7 +28,7 @@ export async function getAllContacts({
     perPage,
     totalItems,
     totalPages,
-    hasNextPage: totalItems - page > 0,
+    hasNextPage: totalItems > page * perPage,
     hasPreviousPage: page > 1,
   };
 }
