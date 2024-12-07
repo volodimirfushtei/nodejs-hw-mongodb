@@ -1,6 +1,8 @@
 import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
+import crypto from 'node:crypto';
 import { User } from '../models/user.js';
+import { Session } from '../models/session.js';
 export async function registerUser(payload) {
   const existingUser = await User.findOne({ email: payload.email });
   if (existingUser !== null) {
@@ -24,5 +26,16 @@ export async function loginUser(email, password) {
   if (!isMatch) {
     throw createHttpError(401, 'Invalid email or password');
   }
-  return user;
+
+  await Session.deleteOne({ userId: user._id });
+  return Session.create({
+    userId: user._id,
+    accessToken: crypto.randomBytes(16).toString('base64'),
+    refreshToken: crypto.randomBytes(16).toString('base64'),
+    accessTokenValidUntil: new Date(Date.now() + 900000),
+    refreshTokenValidUntil: new Date(Date.now() + 24 * 30 * 60 * 60 * 1000),
+  });
+}
+export async function logoutUser(sessionId) {
+  await Session.deleteOne({ _id: sessionId });
 }

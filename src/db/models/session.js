@@ -24,10 +24,7 @@ const sessionSchema = new Schema(
       required: true,
     },
   },
-  {
-    optionKey: false,
-  },
+  { timestamps: true, versionKey: false },
 );
 
-// Створення моделі
 export const Session = model('Session', sessionSchema);
