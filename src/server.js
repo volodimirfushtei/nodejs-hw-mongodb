@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { env } from './env.js';
 import contactsRouter from './routers/contacts.js';
+import authRouter from './routers/auth.js';
 import { initMongoConnection } from './db/initMongoConnection.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
@@ -30,6 +31,7 @@ export async function setupServer() {
   );
 
   app.use(contactsRouter);
+  app.use(authRouter);
   app.use('*', notFoundHandler);
   app.use(errorHandler);
 
