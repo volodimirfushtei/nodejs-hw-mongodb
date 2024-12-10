@@ -6,9 +6,10 @@ export async function getAllContacts({
   sortBy,
   sortOrder,
   filters,
+  userId,
 }) {
   const skip = page > 0 ? (page - 1) * perPage : 0;
-  const contactQuery = MyContacts.find();
+  const contactQuery = MyContacts.find({ userId });
 
   if (filters) {
     contactQuery.where(filters || {});
@@ -33,8 +34,8 @@ export async function getAllContacts({
   };
 }
 
-export async function getContactById(contactId) {
-  const contact = await MyContacts.findById(contactId);
+export async function getContactById(contactId, userId) {
+  const contact = await MyContacts.findOne({ _id: contactId, userId: userId });
   return contact;
 }
 export function createContact(contact) {

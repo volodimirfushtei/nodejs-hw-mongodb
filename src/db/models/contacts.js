@@ -1,7 +1,7 @@
 // src/db/models/student.js
 
 import { model, Schema } from 'mongoose';
-
+import { mongoose } from 'mongoose';
 const contactsSchema = new Schema(
   {
     name: {
@@ -25,6 +25,10 @@ const contactsSchema = new Schema(
       required: true,
       default: 'personal',
       enum: ['work', 'home', 'personal'],
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
     },
   },
   { timestamps: true, versionKey: false },

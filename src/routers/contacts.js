@@ -13,8 +13,10 @@ import { isValidId } from '../middlewares/isValidId .js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { contactSchema } from '../validation/contact.js';
 import { patchContactSchema } from '../validation/contact.js';
+import { authenticate } from '../middlewares/authenticate.js';
 const router = Router();
 const jsonPars = express.json();
+router.use(authenticate);
 router.get('/contacts', ctrlWrapper(getContactsController));
 router.get(
   '/contacts/:contactId',

@@ -18,6 +18,7 @@ export async function getContactsController(req, res) {
     sortBy,
     sortOrder,
     filters,
+    userId: req.user._id,
   });
   if (contacts.length === 0) {
     throw createHttpError(404, 'No contacts found');
@@ -29,15 +30,15 @@ export async function getContactsController(req, res) {
   });
 }
 export async function getContactsByIdController(req, res, next) {
-  const { contactId } = req.params;
+  const { _id } = req.params;
 
-  const contact = await getContactById(contactId);
+  const contact = await getContactById(_id);
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
   res.status(200).send({
     status: 200,
-    message: `Successfully found contact with id ${contactId}`,
+    message: `Successfully found contact with id ${_id}`,
     data: contact,
   });
 }
@@ -48,6 +49,7 @@ export async function createContactController(req, res) {
     email: req.body.email,
     isFavourite: req.body.isFavourite,
     contactType: req.body.contactType,
+    userId: req.user._id,
   };
   const createdContact = await createContact(contact);
   if (createdContact === null) {
@@ -61,18 +63,18 @@ export async function createContactController(req, res) {
   });
 }
 export async function deleteContactController(req, res) {
-  const { contactId } = req.params;
-  const deletedContact = await deleteContact(contactId);
+  const { _id } = req.params;
+  const deletedContact = await deleteContact(_id);
   if (deletedContact === null) {
     throw createHttpError(404, 'Contact not found');
   }
   res.status(204).send({
     status: 204,
   });
-  console.log(`Deleted contact with id ${contactId}`);
+  console.log(`Deleted contact with id ${_id}`);
 }
 export async function patchContactController(req, res, next) {
-  const { contactId } = req.params;
+  const { _id } = req.params;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
   const contact = {};
 
@@ -82,7 +84,7 @@ export async function patchContactController(req, res, next) {
   if (isFavourite !== undefined) contact.isFavourite = isFavourite;
   if (contactType !== undefined) contact.contactType = contactType;
 
-  const updatedContact = await updateContact(contactId, contact);
+  const updatedContact = await updateContact(_id, contact);
   if (!updatedContact) {
     throw createHttpError(404, 'Contact not found');
   }

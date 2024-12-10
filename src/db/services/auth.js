@@ -32,10 +32,30 @@ export async function loginUser(email, password) {
     userId: user._id,
     accessToken: crypto.randomBytes(16).toString('base64'),
     refreshToken: crypto.randomBytes(16).toString('base64'),
-    accessTokenValidUntil: new Date(Date.now() + 900000),
-    refreshTokenValidUntil: new Date(Date.now() + 24 * 30 * 60 * 60 * 1000),
+    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
+    refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
   });
 }
 export async function logoutUser(sessionId) {
   await Session.deleteOne({ _id: sessionId });
+}
+export async function refreshSession(sessionId, refreshToken) {
+  const session = await Session.findById(sessionId);
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
+  if (session.refreshToken !== refreshToken) {
+    throw createHttpError(401, 'Session not found');
+  }
+  if (session.refreshTokenValidUntil < new Date()) {
+    throw createHttpError(401, 'Refresh token expired');
+  }
+  await Session.deleteOne({ _id: session._id });
+  return Session.create({
+    userId: session.userId,
+    accessToken: crypto.randomBytes(16).toString('base64'),
+    refreshToken: crypto.randomBytes(16).toString('base64'),
+    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
+    refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  });
 }
