@@ -1,6 +1,5 @@
 // src/routers/students.js
 import express from 'express';
-import { Router } from 'express';
 import {
   getContactsController,
   getContactsByIdController,
@@ -14,28 +13,20 @@ import { validateBody } from '../middlewares/validateBody.js';
 import { contactSchema } from '../validation/contact.js';
 import { patchContactSchema } from '../validation/contact.js';
 import { authenticate } from '../middlewares/authenticate.js';
-const router = Router();
+const router = express.Router();
 const jsonPars = express.json();
 router.use(authenticate);
-router.get('/contacts', ctrlWrapper(getContactsController));
-router.get(
-  '/contacts/:contactId',
-  isValidId,
-  ctrlWrapper(getContactsByIdController),
-);
+router.get('/', ctrlWrapper(getContactsController));
+router.get('/:contactId', isValidId, ctrlWrapper(getContactsByIdController));
 router.post(
-  '/contacts',
+  '/',
   jsonPars,
   validateBody(contactSchema),
   ctrlWrapper(createContactController),
 );
-router.delete(
-  '/contacts/:contactId',
-  isValidId,
-  ctrlWrapper(deleteContactController),
-);
+router.delete('/:contactId', isValidId, ctrlWrapper(deleteContactController));
 router.patch(
-  '/contacts/:contactId',
+  '/:contactId',
   isValidId,
   jsonPars,
   validateBody(patchContactSchema),

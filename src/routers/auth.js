@@ -1,5 +1,5 @@
 import express from 'express';
-import { Router } from 'express';
+
 import { usersSchema, loginSchema } from '../validation/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import {
@@ -9,21 +9,22 @@ import {
   refreshController,
 } from '../controllers/auth.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-const router = Router();
+const router = express.Router();
 const jsonParser = express.json();
 router.post(
-  '/auth/register',
+  '/register',
   jsonParser,
   validateBody(usersSchema),
   ctrlWrapper(usersController),
 );
 
 router.post(
-  '/auth/login',
+  '/login',
   jsonParser,
   validateBody(loginSchema),
   ctrlWrapper(loginController),
 );
-router.post('/auth/logout', ctrlWrapper(logoutController));
+router.post('/logout', ctrlWrapper(logoutController));
+router.post('/refresh', ctrlWrapper(refreshController));
+
 export default router;
-router.post('/auth/refresh', ctrlWrapper(refreshController));

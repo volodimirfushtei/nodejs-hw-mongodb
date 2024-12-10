@@ -2,6 +2,7 @@ import createHttpError from 'http-errors';
 import { Session } from '../db/models/session.js';
 import { User } from '../db/models/user.js';
 export async function authenticate(req, res, next) {
+  console.log('Authenticating...', req.headers);
   const { authorization } = req.headers;
   if (typeof authorization !== 'string') {
     return next(createHttpError(401, 'Please provide a access token'));
