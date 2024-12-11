@@ -2,7 +2,6 @@ import createHttpError from 'http-errors';
 import { Session } from '../db/models/session.js';
 import { User } from '../db/models/user.js';
 export async function authenticate(req, res, next) {
-  console.log('Authenticating...', req.headers);
   const { authorization } = req.headers;
   if (typeof authorization !== 'string') {
     return next(createHttpError(401, 'Please provide a access token'));
@@ -11,7 +10,6 @@ export async function authenticate(req, res, next) {
   if (bearer !== 'Bearer' || typeof accessToken !== 'string') {
     return next(createHttpError(401, 'Please provide a valid access token'));
   }
-  console.log('Received token:', accessToken);
   const session = await Session.findOne({ accessToken });
   if (session === null) {
     return next(createHttpError(401, 'Session not found'));

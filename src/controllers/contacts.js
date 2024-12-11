@@ -18,7 +18,7 @@ export async function getContactsController(req, res) {
     sortBy,
     sortOrder,
     filters,
-    userId: req.user._id,
+    userId: req.user.id,
   });
   if (contacts.length === 0) {
     throw createHttpError(404, 'No contacts found');
@@ -49,7 +49,7 @@ export async function createContactController(req, res) {
     email: req.body.email,
     isFavourite: req.body.isFavourite,
     contactType: req.body.contactType,
-    userId: req.user._id,
+    userId: req.user.id,
   };
   const createdContact = await createContact(contact);
   if (createdContact === null) {

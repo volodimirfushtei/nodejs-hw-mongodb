@@ -14,7 +14,10 @@ export const validateBody = (schema) => async (req, res, next) => {
       JSON.stringify(
         'Bad Request: lenght mast be with min 3 & max 20 simbols  ',
         {
-          errors: err.details.map((item) => ({ [item.path]: item.message })),
+          errors: err.details.map((item) => ({
+            field: item.path[0], // Get the name of the field that caused the validation error
+            message: item.message, // The error message for the field
+          })),
         },
       ),
     );
