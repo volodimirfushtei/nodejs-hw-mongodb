@@ -59,3 +59,15 @@ export async function refreshSession(sessionId, refreshToken) {
     refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
   });
 }
+export const requestResetToken = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const resetToken = crypto.randomBytes(16).toString('base64');
+  user.resetToken = resetToken;
+  user.resetTokenValidUntil = new Date(Date.now() + 15 * 60 * 1000);
+  await user.save();
+  return resetToken;
+};

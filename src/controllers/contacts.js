@@ -30,15 +30,15 @@ export async function getContactsController(req, res) {
   });
 }
 export async function getContactsByIdController(req, res, next) {
-  const { _id } = req.params;
+  const { contactId } = req.params;
 
-  const contact = await getContactById(_id);
+  const contact = await getContactById(contactId, req.user.id);
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
   res.status(200).send({
     status: 200,
-    message: `Successfully found contact with id ${_id}`,
+    message: `Successfully found contact with id ${contactId}`,
     data: contact,
   });
 }
@@ -63,18 +63,18 @@ export async function createContactController(req, res) {
   });
 }
 export async function deleteContactController(req, res) {
-  const { _id } = req.params;
-  const deletedContact = await deleteContact(_id);
+  const { contactId } = req.params;
+  const deletedContact = await deleteContact(contactId);
   if (deletedContact === null) {
     throw createHttpError(404, 'Contact not found');
   }
   res.status(204).send({
     status: 204,
   });
-  console.log(`Deleted contact with id ${_id}`);
+  console.log(`Deleted contact with id ${contactId}`);
 }
 export async function patchContactController(req, res, next) {
-  const { _id } = req.params;
+  const { contactId } = req.params;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
   const contact = {};
 
@@ -84,7 +84,7 @@ export async function patchContactController(req, res, next) {
   if (isFavourite !== undefined) contact.isFavourite = isFavourite;
   if (contactType !== undefined) contact.contactType = contactType;
 
-  const updatedContact = await updateContact(_id, contact);
+  const updatedContact = await updateContact(contactId, contact);
   if (!updatedContact) {
     throw createHttpError(404, 'Contact not found');
   }
