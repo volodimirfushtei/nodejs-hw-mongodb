@@ -6,6 +6,7 @@ import createHttpError from 'http-errors';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { checkContactByUser } from '../utils/chackContactByUser.js';
 export async function getContactsController(req, res) {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query);
@@ -64,6 +65,9 @@ export async function createContactController(req, res) {
 }
 export async function deleteContactController(req, res) {
   const { contactId } = req.params;
+
+  await checkContactByUser(contactId, req.user.id);
+
   const deletedContact = await deleteContact(contactId);
   if (deletedContact === null) {
     throw createHttpError(404, 'Contact not found');
@@ -77,7 +81,10 @@ export async function patchContactController(req, res, next) {
   const { contactId } = req.params;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
   const contact = {};
-
+  await checkContactByUser(contactId, req.user.id);
+  if (name || phoneNumber || email || isFavourite || contactType) {
+    throw createHttpError(400, 'Invalid contact data');
+  }
   if (name !== undefined) contact.name = name;
   if (phoneNumber !== undefined) contact.phoneNumber = phoneNumber;
   if (email !== undefined) contact.email = email;
