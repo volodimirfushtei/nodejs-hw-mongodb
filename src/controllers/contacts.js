@@ -21,7 +21,7 @@ export async function getContactsController(req, res) {
     filters,
     userId: req.user.id,
   });
-  if (contacts.length === 0) {
+  if (!contacts || contacts.length === 0) {
     throw createHttpError(404, 'No contacts found');
   }
   res.status(200).send({
@@ -80,18 +80,15 @@ export async function deleteContactController(req, res) {
 export async function patchContactController(req, res, next) {
   const { contactId } = req.params;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
-  const contact = {};
   await checkContactByUser(contactId, req.user.id);
-  if (name || phoneNumber || email || isFavourite || contactType) {
-    throw createHttpError(400, 'Invalid contact data');
-  }
+  const contact = {};
   if (name !== undefined) contact.name = name;
   if (phoneNumber !== undefined) contact.phoneNumber = phoneNumber;
   if (email !== undefined) contact.email = email;
   if (isFavourite !== undefined) contact.isFavourite = isFavourite;
   if (contactType !== undefined) contact.contactType = contactType;
 
-  const updatedContact = await updateContact(contactId, contact);
+  const updatedContact = await updateContact(contactId, contact, req.user.id);
   if (!updatedContact) {
     throw createHttpError(404, 'Contact not found');
   }

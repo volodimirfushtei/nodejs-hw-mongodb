@@ -22,6 +22,7 @@ export async function getAllContacts({
       .skip(skip)
       .limit(perPage),
   ]);
+
   const totalPages = Math.ceil(totalItems / perPage);
   return {
     data: contacts,
@@ -44,10 +45,22 @@ export function createContact(contact) {
 export function deleteContact(contactId) {
   return MyContacts.findByIdAndDelete(contactId);
 }
-export const updateContact = async (contactId, payload, options = {}) => {
+export const updateContact = async (
+  contactId,
+  payload,
+  userId,
+  options = {},
+) => {
   try {
+    const existingContact = await MyContacts.findOne({
+      _id: contactId,
+      userId,
+    });
+    if (!existingContact) {
+      return null;
+    }
     const rawResult = await MyContacts.findOneAndUpdate(
-      { _id: contactId },
+      { _id: contactId, userId },
       { $set: payload },
       {
         new: true,
