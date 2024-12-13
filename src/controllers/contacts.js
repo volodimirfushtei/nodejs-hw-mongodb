@@ -8,6 +8,9 @@ import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { checkContactByUser } from '../utils/chackContactByUser.js';
 export async function getContactsController(req, res) {
+  if (!req.user || !req.user.id) {
+    throw createHttpError(403, 'Please unauthorized');
+  }
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query);
   const filters = parseFilterParams(req.query);
@@ -24,6 +27,7 @@ export async function getContactsController(req, res) {
   if (!contacts || contacts.length === 0) {
     throw createHttpError(404, 'No contacts found');
   }
+
   res.status(200).send({
     status: 200,
     message: 'Successfully found contacts!',
