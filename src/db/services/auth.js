@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import crypto from 'node:crypto';
 import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
+import jwt from 'jsonwebtoken';
 export async function registerUser(payload) {
   const existingUser = await User.findOne({ email: payload.email });
   if (existingUser !== null) {
@@ -59,3 +60,17 @@ export async function refreshSession(sessionId, refreshToken) {
     refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
   });
 }
+export const requestResetPassword = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+  const resetToken = jwt.sign(
+    { sub: user._id, email: user.email },
+    process.env.JWT_CERT,
+    {
+      expiresIn: '5m',
+    },
+  );
+  console.log({ resetToken });
+};

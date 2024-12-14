@@ -3,6 +3,7 @@ import {
   loginUser,
   logoutUser,
   refreshSession,
+  requestResetPassword,
 } from '../db/services/auth.js';
 
 export async function usersController(req, res) {
@@ -69,3 +70,10 @@ export async function refreshController(req, res) {
     data: { accessToken: session.accessToken },
   });
 }
+
+export const requestResetEmailController = async (req, res) => {
+  const { email } = req.body;
+  console.log({ email });
+  requestResetPassword(email);
+  res.send({ status: 200 });
+};
