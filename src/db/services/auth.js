@@ -69,7 +69,7 @@ export const requestResetPassword = async (email) => {
     { sub: user._id, email: user.email },
     process.env.JWT_CERT,
     {
-      expiresIn: '5m',
+      expiresIn: '2 days',
     },
   );
   console.log(`http//localhost:3000//reset-password?token=${resetToken}`);
@@ -78,8 +78,21 @@ export async function resetPassword(newPassword, token) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_CERT);
     console.log(decoded);
+    const user = await User.findOne({ _id: decoded.sub, email: decoded.email });
+    if (user === null) {
+      throw createHttpError(404, 'User not found');
+    }
+    const encryptedPassword = await bcrypt.hash(newPassword, 10);
+    await User.findByIdAndDelete(
+      { _id: user._id },
+      { password: encryptedPassword },
+    );
   } catch (error) {
-    console.error(error);
-    throw createHttpError(401, 'Invalid token');
+    if (
+      error.name === 'JsonWebTokenError' ||
+      error.name === 'TokenExpiredError'
+    ) {
+      throw createHttpError(401, 'Invalid token');
+    }
   }
 }
