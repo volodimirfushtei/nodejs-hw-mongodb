@@ -72,5 +72,14 @@ export const requestResetPassword = async (email) => {
       expiresIn: '5m',
     },
   );
-  console.log({ resetToken });
+  console.log(`http//localhost:3000//reset-password?token=${resetToken}`);
 };
+export async function resetPassword(newPassword, token) {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_CERT);
+    console.log(decoded);
+  } catch (error) {
+    console.error(error);
+    throw createHttpError(401, 'Invalid token');
+  }
+}

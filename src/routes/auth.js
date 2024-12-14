@@ -4,6 +4,7 @@ import {
   usersSchema,
   loginSchema,
   requestResetEmailSchema,
+  requestResetPasswordSchema,
 } from '../validation/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import {
@@ -12,8 +13,10 @@ import {
   logoutController,
   refreshController,
   requestResetEmailController,
+  requestResetPasswordController,
 } from '../controllers/auth.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+
 const router = express.Router();
 const jsonParser = express.json();
 router.post(
@@ -36,5 +39,11 @@ router.post(
   jsonParser,
   validateBody(requestResetEmailSchema),
   ctrlWrapper(requestResetEmailController),
+);
+router.post(
+  '/reset-password',
+  jsonParser,
+  validateBody(requestResetPasswordSchema),
+  ctrlWrapper(requestResetPasswordController),
 );
 export default router;
