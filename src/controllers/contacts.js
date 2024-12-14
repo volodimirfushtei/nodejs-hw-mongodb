@@ -6,7 +6,7 @@ import createHttpError from 'http-errors';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
-import { checkContactByUser } from '../utils/chackContactByUser.js';
+
 export async function getContactsController(req, res) {
   if (!req.user || !req.user.id) {
     throw createHttpError(403, 'Please unauthorized');
@@ -69,36 +69,53 @@ export async function createContactController(req, res) {
 }
 export async function deleteContactController(req, res) {
   const { contactId } = req.params;
-
-  await checkContactByUser(contactId, req.user.id);
-
+  const contact = await getContactById(contactId, req.user.id);
+  if (!contact) {
+    throw createHttpError(
+      404,
+      'Contact not found or does not belong to this user',
+    );
+  }
   const deletedContact = await deleteContact(contactId);
-  if (deletedContact === null) {
+  if (!deletedContact) {
     throw createHttpError(404, 'Contact not found');
   }
+
   res.status(204).send({
     status: 204,
   });
   console.log(`Deleted contact with id ${contactId}`);
 }
+
 export async function patchContactController(req, res, next) {
   const { contactId } = req.params;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
-  await checkContactByUser(contactId, req.user.id);
-  const contact = {};
-  if (name !== undefined) contact.name = name;
-  if (phoneNumber !== undefined) contact.phoneNumber = phoneNumber;
-  if (email !== undefined) contact.email = email;
-  if (isFavourite !== undefined) contact.isFavourite = isFavourite;
-  if (contactType !== undefined) contact.contactType = contactType;
+  const contact = await getContactById(contactId, req.user.id);
+  if (!contact) {
+    throw createHttpError(
+      404,
+      'Contact not found or does not belong to this user',
+    );
+  }
+  const updatedFields = {};
+  if (name !== undefined) updatedFields.name = name;
+  if (phoneNumber !== undefined) updatedFields.phoneNumber = phoneNumber;
+  if (email !== undefined) updatedFields.email = email;
+  if (isFavourite !== undefined) updatedFields.isFavourite = isFavourite;
+  if (contactType !== undefined) updatedFields.contactType = contactType;
 
-  const updatedContact = await updateContact(contactId, contact, req.user.id);
+  const updatedContact = await updateContact(
+    contactId,
+    updatedFields,
+    req.user.id,
+  );
   if (!updatedContact) {
     throw createHttpError(404, 'Contact not found');
   }
+
   res.status(200).send({
     status: 200,
-    message: `Successfully patched a contact!`,
-    data: updatedContact.contact,
+    message: `Successfully updated the contact!`,
+    data: updatedContact,
   });
 }
