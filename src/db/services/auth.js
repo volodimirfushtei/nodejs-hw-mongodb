@@ -32,7 +32,7 @@ export async function loginUser(email, password) {
     userId: user._id,
     accessToken: crypto.randomBytes(16).toString('base64'),
     refreshToken: crypto.randomBytes(16).toString('base64'),
-    accessTokenValidUntil: new Date(Date.now() + 30 * 60 * 1000),
+    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
     refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
   });
 }
@@ -55,7 +55,7 @@ export async function refreshSession(sessionId, refreshToken) {
     userId: session.userId,
     accessToken: crypto.randomBytes(16).toString('base64'),
     refreshToken: crypto.randomBytes(16).toString('base64'),
-    accessTokenValidUntil: new Date(Date.now() + 30 * 60 * 1000),
+    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
     refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
   });
 }
@@ -67,7 +67,7 @@ export const requestResetToken = async (email) => {
 
   const resetToken = crypto.randomBytes(16).toString('base64');
   user.resetToken = resetToken;
-  user.resetTokenValidUntil = new Date(Date.now() + 30 * 60 * 1000);
+  user.resetTokenValidUntil = new Date(Date.now() + 15 * 60 * 1000);
   await user.save();
   return resetToken;
 };
