@@ -4,6 +4,16 @@ import crypto from 'node:crypto';
 import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
 import jwt from 'jsonwebtoken';
+import { sendMail } from '../../utils/sendMail.js';
+import Handlebars from 'handlebars';
+import * as fs from 'node:fs';
+import path from 'node:path';
+
+const RESET_PASSWORD_TEMPLATE = fs.readFileSync(
+  path.resolve('src/templates/resetPassword.hbs'),
+  { encoding: 'UTF-8' },
+);
+
 export async function registerUser(payload) {
   const existingUser = await User.findOne({ email: payload.email });
   if (existingUser !== null) {
@@ -72,6 +82,14 @@ export const requestResetPassword = async (email) => {
       expiresIn: '2 days',
     },
   );
+  Handlebars.compile(RESET_PASSWORD_TEMPLATE);
+  await sendMail({
+    from: 'fuschteyy@gmail.com',
+    to: user.email,
+    subject: 'Password reset request',
+    text: `Please use the following link to reset your password: http://localhost:3000/reset-password?token=${resetToken}`,
+  });
+
   console.log(`http//localhost:3000//reset-password?token=${resetToken}`);
 };
 export async function resetPassword(newPassword, token) {

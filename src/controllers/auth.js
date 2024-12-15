@@ -76,7 +76,7 @@ export const requestResetEmailController = async (req, res) => {
   const { email } = req.body;
   console.log({ email });
   requestResetPassword(email);
-  res.send({ status: 200 });
+  res.send({ status: 200, message: 'Reset Email has been sent', data: {} });
 };
 export async function requestResetPasswordController(req, res) {
   const { password, token } = req.body;
