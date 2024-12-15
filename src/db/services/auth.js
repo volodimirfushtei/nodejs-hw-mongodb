@@ -5,12 +5,12 @@ import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
 import jwt from 'jsonwebtoken';
 import { sendMail } from '../../utils/sendMail.js';
-import Handlebars from 'handlebars';
+import handlebars from 'handlebars';
 import * as fs from 'node:fs';
 import path from 'node:path';
 
 const RESET_PASSWORD_TEMPLATE = fs.readFileSync(
-  path.resolve('src/templates/resetPassword.hbs'),
+  path.resolve('src/templates/resetPassword.html'),
   { encoding: 'UTF-8' },
 );
 
@@ -82,12 +82,18 @@ export const requestResetPassword = async (email) => {
       expiresIn: '2 days',
     },
   );
-  Handlebars.compile(RESET_PASSWORD_TEMPLATE);
+  const template = handlebars.compile(RESET_PASSWORD_TEMPLATE);
+  const html = template({
+    name: user.name,
+    link: `${process.env.APP_DOMAIN}/reset-password?token=${resetToken}`,
+    resetToken: resetToken,
+  });
+
   await sendMail({
     from: 'fuschteyy@gmail.com',
     to: user.email,
-    subject: 'Password reset request',
-    text: `Please use the following link to reset your password: http://localhost:3000/reset-password?token=${resetToken}`,
+    subject: 'Reset your password',
+    html,
   });
 
   console.log(`http//localhost:3000//reset-password?token=${resetToken}`);
