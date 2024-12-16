@@ -43,7 +43,7 @@ export async function loginUser(email, password) {
     userId: user._id,
     accessToken: crypto.randomBytes(16).toString('base64'),
     refreshToken: crypto.randomBytes(16).toString('base64'),
-    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
+    accessTokenValidUntil: new Date(Date.now() + 180 * 60 * 1000),
     refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
   });
 }
@@ -85,7 +85,7 @@ export const requestResetPassword = async (email) => {
   const template = handlebars.compile(RESET_PASSWORD_TEMPLATE);
   const html = template({
     name: user.name,
-    link: `${process.env.APP_DOMAIN}/reset-password?token=${resetToken}`,
+    link: `${process.env.APP_DOMAIN}/reset-pwd?token=${resetToken}`,
     resetToken: resetToken,
   });
 
@@ -96,7 +96,7 @@ export const requestResetPassword = async (email) => {
     html,
   });
 
-  console.log(`http//localhost:3000//reset-password?token=${resetToken}`);
+  console.log(`http//localhost:3000//reset-pwd?token=${resetToken}`);
 };
 export async function resetPassword(newPassword, token) {
   try {
@@ -107,16 +107,18 @@ export async function resetPassword(newPassword, token) {
       throw createHttpError(404, 'User not found');
     }
     const encryptedPassword = await bcrypt.hash(newPassword, 10);
-    await User.findByIdAndDelete(
-      { _id: user._id },
-      { password: encryptedPassword },
-    );
+    await User.findByIdAndUpdate(user._id, { password: encryptedPassword });
+    return {
+      status: 200,
+      message: 'Password has been successfully reset.',
+      data: {},
+    };
   } catch (error) {
     if (
       error.name === 'JsonWebTokenError' ||
       error.name === 'TokenExpiredError'
     ) {
-      throw createHttpError(401, 'Invalid token');
+      throw createHttpError(401, 'Token is expired or invalid');
     }
   }
 }
