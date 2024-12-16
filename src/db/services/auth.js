@@ -52,7 +52,7 @@ export async function logoutUser(sessionId) {
 }
 export async function refreshSession(sessionId, refreshToken) {
   const session = await Session.findById(sessionId);
-  if (!session) {
+  if (session === null) {
     throw createHttpError(401, 'Session not found');
   }
   if (session.refreshToken !== refreshToken) {
@@ -110,7 +110,7 @@ export async function resetPassword(newPassword, token) {
     await User.findByIdAndUpdate(user._id, { password: encryptedPassword });
     return {
       status: 200,
-      message: 'Password has been successfully reset.',
+      message: 'Reset password email has been successfully sent.',
       data: {},
     };
   } catch (error) {
