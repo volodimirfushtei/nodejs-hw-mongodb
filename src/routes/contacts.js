@@ -29,6 +29,7 @@ router.post(
 router.delete('/:contactId', isValidId, ctrlWrapper(deleteContactController));
 router.patch(
   '/:contactId',
+  upload.single('photo'),
   isValidId,
   jsonPars,
   validateBody(patchContactSchema),

@@ -12,4 +12,5 @@ export const patchContactSchema = Joi.object({
   email: Joi.string().email(),
   isFavourite: Joi.boolean(),
   contactType: Joi.string().valid('personal', 'home', 'work'),
+  photo: Joi.string(),
 });
