@@ -17,3 +17,20 @@ export function uploadToCloudinaryStorage(filePath) {
     });
   });
 }
+export const getImageByPublicId = async (publicId) => {
+  try {
+    const result = await cloudinary.api.resource(publicId);
+    return result;
+  } catch (error) {
+    console.error('Error retrieving the photo:', error);
+    throw new Error('Could not find the photo on Cloudinary');
+  }
+};
+export async function deleteImageFromCloudinary(publicId) {
+  try {
+    await cloudinary.api.delete_resources([publicId]);
+  } catch (error) {
+    console.error('Error deleting :', error);
+    throw new Error('Could not delete photo from Cloudinary');
+  }
+}

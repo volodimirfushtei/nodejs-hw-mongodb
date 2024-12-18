@@ -49,17 +49,13 @@ export async function getContactsByIdController(req, res, next) {
 
 export async function createContactController(req, res) {
   let photo = null;
-
-  // Перш ніж працювати з multer, перевіримо, чи файл існує у запиті
-
   try {
     // Якщо фото є, перевіримо, куди його завантажити
     if (typeof req.file !== 'undefined') {
-      if (process.env.ENABLE_CLOUDINARY === 'true') {
-        // Завантажуємо фото в Cloudinary, якщо це увімкнено
+      if (process.env.ENABLE_CLOUDINARY === 'false') {
         const result = await uploadToCloudinaryStorage(req.file.path);
         await fs.unlink(req.file.path);
-        photo = result.secure_url; // Отримуємо URL після завантаження
+        photo = result.secure_url;
       } else {
         await fs.rename(
           req.file.path,
@@ -138,7 +134,7 @@ export async function patchContactController(req, res, next) {
 
   if (req.file) {
     try {
-      if (process.env.ENABLE_CLOUDINARY === 'true') {
+      if (process.env.ENABLE_CLOUDINARY === 'false') {
         const result = await uploadToCloudinaryStorage(req.file.path);
         await fs.unlink(req.file.path);
         photo = result.secure_url;

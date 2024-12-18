@@ -46,24 +46,22 @@ export function deleteContact(contactId) {
 }
 export const updateContact = async (contactId, payload, options = {}) => {
   try {
-    const rawResult = await MyContacts.findOneAndUpdate(
+    const updatedContact = await MyContacts.findOneAndUpdate(
       { _id: contactId },
       { $set: payload },
       {
-        new: true,
         returnDocument: 'after',
         runValidators: true,
         ...options,
       },
     );
-    if (!rawResult) return null;
-    const contactWithoutVersion = rawResult.toObject();
-    delete contactWithoutVersion.__v;
-
-    return {
-      contact: contactWithoutVersion,
-      isNew: Boolean(rawResult.upsertedId),
-    };
+    return updatedContact
+      ? {
+          status: 200,
+          message: 'Successfully patched a contact!',
+          data: updatedContact.toObject({ versionKey: false }),
+        }
+      : null;
   } catch (error) {
     throw new Error('Error updating contact: ' + error.message);
   }
