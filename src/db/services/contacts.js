@@ -45,24 +45,14 @@ export function deleteContact(contactId) {
   return MyContacts.findByIdAndDelete(contactId);
 }
 export const updateContact = async (contactId, payload, options = {}) => {
-  try {
-    const updatedContact = await MyContacts.findOneAndUpdate(
-      { _id: contactId },
-      { $set: payload },
-      {
-        returnDocument: 'after',
-        runValidators: true,
-        ...options,
-      },
-    );
-    return updatedContact
-      ? {
-          status: 200,
-          message: 'Successfully patched a contact!',
-          data: updatedContact.toObject({ versionKey: false }),
-        }
-      : null;
-  } catch (error) {
-    throw new Error('Error updating contact: ' + error.message);
-  }
+  const updatedContact = await MyContacts.findOneAndUpdate(
+    { _id: contactId },
+    { $set: payload },
+    {
+      returnDocument: 'after',
+      runValidators: true,
+      ...options,
+    },
+  );
+  return updatedContact;
 };
