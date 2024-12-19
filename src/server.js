@@ -3,13 +3,11 @@ import pino from 'pino-http';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-
 import routes from './routes/index.js';
 import { initMongoConnection } from './db/initMongoConnection.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import path from 'node:path';
-
 dotenv.config();
 
 export async function setupServer() {
@@ -22,16 +20,8 @@ export async function setupServer() {
     console.error('Failed to connect to MongoDB:', error);
     process.exit(1);
   }
-
   app.use('/photos', express.static(path.resolve('src', 'public/photos')));
-  app.use(
-    cors({
-      origin: 'https://localhost:3000',
-      methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-      credentials: true,
-    }),
-  );
-
+  app.use(cors());
   app.use(cookieParser());
   app.use(
     pino({
@@ -42,6 +32,7 @@ export async function setupServer() {
   );
 
   app.use(routes);
+
   app.use('*', notFoundHandler);
   app.use(errorHandler);
 
@@ -49,5 +40,4 @@ export async function setupServer() {
     console.log(`Server is running on port ${PORT}`);
   });
 }
-
 setupServer();
