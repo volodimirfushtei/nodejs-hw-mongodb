@@ -44,15 +44,6 @@ export function createContact(contact) {
 export function deleteContact(contactId) {
   return MyContacts.findByIdAndDelete(contactId);
 }
-export const updateContact = async (contactId, payload, options = {}) => {
-  const updatedContact = await MyContacts.findOneAndUpdate(
-    { _id: contactId },
-    { $set: payload },
-    {
-      returnDocument: 'after',
-      runValidators: true,
-      ...options,
-    },
-  );
-  return updatedContact;
-};
+export function updateContact(contactId, contact) {
+  return MyContacts.findByIdAndUpdate(contactId, contact, { new: true });
+}
