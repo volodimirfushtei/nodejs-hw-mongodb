@@ -11,7 +11,6 @@ cloudinary.v2.config({
 
 export async function uploadToCloudinary(filePath) {
   try {
-    console.log('Uploading file to Cloudinary...');
     const result = await cloudinary.v2.uploader.upload(filePath);
     console.log('File uploaded to Cloudinary:', result.secure_url);
     return result;
