@@ -20,7 +20,7 @@ export async function setupServer() {
     console.error('Failed to connect to MongoDB:', error);
     process.exit(1);
   }
-  app.use('/photos', express.static(path.resolve('src', 'public/photos')));
+  app.use('/photos', express.static(path.resolve('src/public/photos')));
   app.use(cors());
   app.use(cookieParser());
   app.use(

@@ -1,14 +1,17 @@
 import multer from 'multer';
 import path from 'node:path';
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.resolve('src', 'public', 'photos')); // Вказуємо папку для фото
+  destination: function (req, file, cb) {
+    console.log(file);
+    cb(null, path.resolve('src', 'tmp'));
   },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Унікальне ім'я файлу
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      Date.now() + '-' + Math.round(Math.random() * 1e9) + file.originalname,
+    );
   },
 });
 
-// Ініціалізація multer
 const upload = multer({ storage });
 export { upload };

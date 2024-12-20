@@ -7,9 +7,10 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 
-import { uploadToCloudinaryStorage } from '../utils/uploadToCloudinary.js';
+import { uploadToCloudinary } from '../utils/uploadToCloudinary.js';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
+
 export async function getContactsController(req, res) {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query);
@@ -49,39 +50,47 @@ export async function getContactsByIdController(req, res, next) {
 
 export async function createContactController(req, res) {
   let photo = null;
-  // Якщо фото є, перевіримо, куди його завантажити
-  if (typeof req.file !== 'undefined') {
-    if (process.env.ENABLE_CLOUDINARY === 'true') {
-      const result = await uploadToCloudinaryStorage(req.file.path);
-      console.log(result);
-      await fs.unlink(req.file.path);
-      photo = result.secure_url;
-    } else {
-      await fs.rename(
-        req.file.path,
-        path.resolve('src', 'public', 'photos', req.file.filename),
-      );
-      photo = `http://localhost:3000/photos/${req.file.filename}`;
+  try {
+    if (req.file) {
+      if (process.env.ENABLE_CLOUDINARY === 'true') {
+        const result = await uploadToCloudinary(req.file.path);
+        await fs.unlink(req.file.path);
+        photo = result.secure_url;
+      } else {
+        await fs.rename(
+          req.file.path,
+          path.resolve('src', 'public', 'photos', req.file.filename),
+        );
+        photo = `http://localhost:3000/photos/${req.file.filename}`;
+      }
     }
+    const contact = {
+      name: req.body.name,
+      phoneNumber: req.body.phoneNumber,
+      email: req.body.email,
+      isFavourite: req.body.isFavourite,
+      contactType: req.body.contactType,
+      userId: req.user.id,
+      photo,
+    };
+    const createdContact = await createContact(contact);
+    if (!createdContact) {
+      return res.status(400).send({ message: 'Invalid contact data' });
+    }
+
+    res.status(201).send({
+      status: 201,
+      message: 'Contact created successfully',
+      data: createdContact,
+    });
+  } catch (error) {
+    console.error('Error creating contact:', error);
+    res.status(500).send({
+      status: 500,
+      message: 'Error creating contact',
+      error: error.message,
+    });
   }
-  const contact = {
-    name: req.body.name,
-    phoneNumber: req.body.phoneNumber,
-    email: req.body.email,
-    isFavourite: req.body.isFavourite,
-    contactType: req.body.contactType,
-    userId: req.user.id,
-    photo,
-  };
-  const createdContact = await createContact(contact);
-  if (!createdContact) {
-    return res.status(400).send({ message: 'Invalid contact data' });
-  }
-  res.status(201).send({
-    status: 201,
-    message: 'Successfully created a contact!',
-    data: createdContact,
-  });
 }
 
 export async function deleteContactController(req, res) {
@@ -130,7 +139,7 @@ export async function patchContactController(req, res, next) {
 
   if (req.file) {
     if (process.env.ENABLE_CLOUDINARY === 'true') {
-      const result = await uploadToCloudinaryStorage(req.file.path);
+      const result = await uploadToCloudinary(req.file.path);
       await fs.unlink(req.file.path);
       photo = result.secure_url;
     } else {

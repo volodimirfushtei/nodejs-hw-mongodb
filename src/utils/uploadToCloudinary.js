@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import cloudinary from 'cloudinary';
 
 cloudinary.v2.config({
@@ -6,23 +8,18 @@ cloudinary.v2.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-export function uploadToCloudinaryStorage(filePath) {
-  return cloudinary.v2.uploader.upload(filePath);
-}
-export const getImageByPublicId = async (publicId) => {
+
+export async function uploadToCloudinary(filePath) {
   try {
-    const result = await cloudinary.api.resource(publicId);
+    console.log('Uploading file to Cloudinary...');
+    const result = await cloudinary.v2.uploader.upload(filePath);
+    console.log('File uploaded to Cloudinary:', result.secure_url);
     return result;
   } catch (error) {
-    console.error('Error :', error);
-    throw new Error('Could not find a photo on Cloudinary');
-  }
-};
-export async function deleteImageFromCloudinary(publicId) {
-  try {
-    await cloudinary.api.delete_resources([publicId]);
-  } catch (error) {
-    console.error('Error deleting :', error);
-    throw new Error('Could not delete photo from Cloudinary');
+    console.error('Error uploading to Cloudinary:', error);
+    throw error;
   }
 }
+console.log(process.env.CLOUDINARY_CLOUD_NAME);
+console.log(process.env.CLOUDINARY_API_KEY);
+console.log(process.env.CLOUDINARY_API_SECRET);
