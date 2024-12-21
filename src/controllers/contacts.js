@@ -71,12 +71,7 @@ export async function createContactController(req, res) {
         photo = cloudinaryResult.secure_url;
       } else {
         // Якщо Cloudinary не використовується, зберігаємо файл локально
-        const targetPath = path.resolve(
-          'src',
-          'public',
-          'photos',
-          req.file.filename,
-        );
+        const targetPath = path.resolve('public', 'photos', req.file.filename);
         await fs.rename(tmpFilePath, targetPath); // Переміщаємо файл у папку 'avatars'
 
         // Встановлюємо локальне посилання на фото
