@@ -6,7 +6,7 @@ import {
   requestResetPassword,
   resetPassword,
 } from '../db/services/auth.js';
-
+import createHttpError from 'http-errors';
 export async function usersController(req, res) {
   const payload = {
     name: req.body.name,
@@ -72,11 +72,25 @@ export async function refreshController(req, res) {
   });
 }
 
-export const requestResetEmailController = async (req, res) => {
+export const requestResetEmailController = async (req, res, next) => {
   const { email } = req.body;
   console.log({ email });
-  requestResetPassword(email);
-  res.send({ status: 200, message: 'Reset Email has been sent', data: {} });
+  try {
+    const emailSent = await requestResetPassword(email);
+    if (!emailSent) {
+      throw createHttpError(
+        500,
+        'Failed to send the email, please try again later.',
+      );
+    }
+    res.send({
+      status: 200,
+      message: 'Reset password email has been successfully sent.',
+      data: {},
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 export async function requestResetPasswordController(req, res) {
   const { password, token } = req.body;

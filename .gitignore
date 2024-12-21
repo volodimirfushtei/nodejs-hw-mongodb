@@ -7,7 +7,6 @@
 .vscode
 .DS_Store
 .idea
-
 /public/*
 !/public/.gitkeep
 /public/photos/*

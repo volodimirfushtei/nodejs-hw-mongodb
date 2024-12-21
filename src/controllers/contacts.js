@@ -49,40 +49,29 @@ export async function getContactsByIdController(req, res, next) {
 }
 
 export async function createContactController(req, res) {
-  console.log('Received request:', req.body); // Логування вхідних даних
+  console.log('Received request:', req.body);
 
   let photo = null;
-
-  // Якщо є файл у запиті
   if (req.file) {
     const tmpFilePath = req.file.path;
 
     try {
-      // Логування шляху до файлу для відлагодження
       console.log('File path:', tmpFilePath);
 
       if (process.env.ENABLE_CLOUDINARY === 'true') {
-        // Завантажуємо файл на Cloudinary
         console.log('Uploading file to Cloudinary:', tmpFilePath);
         const cloudinaryResult = await uploadToCloudinary(tmpFilePath);
         console.log('Cloudinary upload result:', cloudinaryResult);
 
-        // Отримуємо URL файлу після завантаження
         photo = cloudinaryResult.secure_url;
       } else {
-        // Якщо Cloudinary не використовується, зберігаємо файл локально
         const targetPath = path.resolve('public', 'photos', req.file.filename);
-        await fs.rename(tmpFilePath, targetPath); // Переміщаємо файл у папку 'avatars'
-
-        // Встановлюємо локальне посилання на фото
+        await fs.rename(tmpFilePath, targetPath);
         photo = `http://localhost:3000/photos/${req.file.filename}`;
       }
-
-      // Після обробки файлу, намагаємось видалити тимчасовий файл
       await fs.unlink(tmpFilePath);
       console.log('Temporary file deleted:', tmpFilePath);
     } catch (error) {
-      // Логування помилки
       console.error('Error during file upload or processing:', error);
       return res.status(500).send({
         message: 'Failed to upload or process the photo',
@@ -90,8 +79,6 @@ export async function createContactController(req, res) {
       });
     }
   }
-
-  // Створюємо контакт з фото (якщо воно є)
   const contact = {
     name: req.body.name,
     phoneNumber: req.body.phoneNumber,
@@ -103,17 +90,13 @@ export async function createContactController(req, res) {
   };
 
   try {
-    // Створюємо контакт (припускаємо, що createContact вже реалізована)
     const result = await createContact(contact);
-
-    // Відповідь на успішне створення
     res.status(201).send({
       status: 201,
       message: 'Contact created successfully',
       data: result,
     });
   } catch (error) {
-    // Логування помилки при створенні контакту
     console.error('Error creating contact:', error);
     res.status(500).send({
       status: 500,
