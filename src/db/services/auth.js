@@ -70,11 +70,13 @@ export async function refreshSession(sessionId, refreshToken) {
     refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
   });
 }
+
 export const requestResetPassword = async (email) => {
   const user = await User.findOne({ email });
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
+
   const resetToken = jwt.sign(
     { sub: user._id, email: user.email },
     process.env.JWT_CERT,
@@ -88,16 +90,23 @@ export const requestResetPassword = async (email) => {
     link: `${process.env.APP_DOMAIN}/reset-pwd?token=${resetToken}`,
     resetToken: resetToken,
   });
-
-  await sendMail({
-    from: 'fuschteyy@gmail.com',
-    to: user.email,
-    subject: 'Reset your password',
-    html,
-  });
-
-  console.log(`http//localhost:3000//reset-pwd?token=${resetToken}`);
+  try {
+    await sendMail({
+      from: 'fuschteyy@gmail.com',
+      to: user.email,
+      subject: 'Reset your password',
+      html,
+    });
+  } catch (err) {
+    console.error('Error sending email:', err);
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
+  console.log(`http://localhost:3000/reset-pwd?token=${resetToken}`);
 };
+
 export async function resetPassword(newPassword, token) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_CERT);
