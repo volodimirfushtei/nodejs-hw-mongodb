@@ -1,11 +1,13 @@
-import createHttpError from 'http-errors';
+import { isHttpError } from 'http-errors';
 
-export function errorHandler(err, req, res, next) {
-  if (!err.status) {
-    err = createHttpError(500, 'Something went wrong');
+export function errorHandler(error, req, res, next) {
+  if (isHttpError(error) === true) {
+    return res
+      .status(error.statusCode)
+      .send({ status: error.statusCode, message: error.message });
   }
-  res.status(err.status).send({
-    status: err.status,
-    data: err,
-  });
+
+  console.error(error);
+
+  res.status(500).send({ status: 500, message: error.message });
 }
