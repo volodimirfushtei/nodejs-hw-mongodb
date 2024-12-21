@@ -173,12 +173,7 @@ export async function patchContactController(req, res, next) {
       await fs.unlink(req.file.path);
       photo = result.secure_url;
     } else {
-      const photoPath = path.resolve(
-        'src',
-        'public',
-        'photos',
-        req.file.filename,
-      );
+      const photoPath = path.resolve('public', 'photos', req.file.filename);
       await fs.rename(req.file.path, photoPath);
       photo = `http://localhost:3000/photos/${req.file.filename}`;
     }
