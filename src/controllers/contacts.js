@@ -53,25 +53,50 @@ export async function createContactController(req, res) {
 
   let photo = null;
 
+  // Якщо є файл у запиті
   if (req.file) {
-    try {
-      console.log('Uploading file to Cloudinary:', req.file.path); // Логування шляху до файлу
-      const cloudinaryResult = await uploadToCloudinary(req.file.path);
-      console.log('Cloudinary upload result:', cloudinaryResult); // Логування результату завантаження
-      photo = cloudinaryResult.secure_url;
+    const tmpFilePath = req.file.path;
 
-      // Видалення файлу після завантаження
-      fs.unlink(req.file.path);
+    try {
+      // Логування шляху до файлу для відлагодження
+      console.log('File path:', tmpFilePath);
+
+      if (process.env.ENABLE_CLOUDINARY === 'true') {
+        // Завантажуємо файл на Cloudinary
+        console.log('Uploading file to Cloudinary:', tmpFilePath);
+        const cloudinaryResult = await uploadToCloudinary(tmpFilePath);
+        console.log('Cloudinary upload result:', cloudinaryResult);
+
+        // Отримуємо URL файлу після завантаження
+        photo = cloudinaryResult.secure_url;
+      } else {
+        // Якщо Cloudinary не використовується, зберігаємо файл локально
+        const targetPath = path.resolve(
+          'src',
+          'public',
+          'photos',
+          req.file.filename,
+        );
+        await fs.rename(tmpFilePath, targetPath); // Переміщаємо файл у папку 'avatars'
+
+        // Встановлюємо локальне посилання на фото
+        photo = `http://localhost:3000/photos/${req.file.filename}`;
+      }
+
+      // Після обробки файлу, намагаємось видалити тимчасовий файл
+      await fs.unlink(tmpFilePath);
+      console.log('Temporary file deleted:', tmpFilePath);
     } catch (error) {
-      console.error('Cloudinary upload failed:', error); // Логування помилки завантаження на Cloudinary
+      // Логування помилки
+      console.error('Error during file upload or processing:', error);
       return res.status(500).send({
-        message: 'Failed to upload photo to Cloudinary',
+        message: 'Failed to upload or process the photo',
         error: error.message,
       });
     }
   }
 
-  // Створення об'єкта контактів
+  // Створюємо контакт з фото (якщо воно є)
   const contact = {
     name: req.body.name,
     phoneNumber: req.body.phoneNumber,
@@ -83,25 +108,23 @@ export async function createContactController(req, res) {
   };
 
   try {
-    console.log('Creating contact:', contact); // Логування даних контакту перед створенням
-    const createdContact = await createContact(contact);
+    // Створюємо контакт (припускаємо, що createContact вже реалізована)
+    const result = await createContact(contact);
 
-    if (!createdContact) {
-      console.error('Failed to create contact'); // Логування помилки при створенні контакту
-      return res.status(400).send({ message: 'Invalid contact data' });
-    }
-
-    console.log('Contact created successfully:', createdContact); // Логування успішного створення контакту
+    // Відповідь на успішне створення
     res.status(201).send({
       status: 201,
-      message: 'Successfully created a contact!',
-      data: createdContact,
+      message: 'Contact created successfully',
+      data: result,
     });
   } catch (error) {
-    console.error('Error creating contact:', error); // Логування загальної помилки
-    res
-      .status(500)
-      .send({ message: 'Failed to create contact', error: error.message });
+    // Логування помилки при створенні контакту
+    console.error('Error creating contact:', error);
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred while creating the contact',
+      error: error.message,
+    });
   }
 }
 
