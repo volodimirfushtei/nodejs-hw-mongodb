@@ -24,8 +24,17 @@ paths:
       $ref: ../swagger/paths/contacts/{contactId}/patch.yaml
     delete:
       $ref: ../swagger/paths/contacts/{contactId}/delete.yaml
+  /auth/register:
+    post:
+      $ref: ../swagger/paths/auth/register/post.yaml
+  /auth/login:
+    post:
+      $ref: ../swagger/paths/auth/login/post.yaml
+  /auth/logout:
+    $ref: ../swagger/paths/auth/logout/post.yaml
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+      bearerFormat: JWT

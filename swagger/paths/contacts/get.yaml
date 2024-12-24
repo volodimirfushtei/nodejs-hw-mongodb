@@ -33,12 +33,33 @@ responses:
               example: 200
             message:
               type: string
-              example: 'Successfully found contacts'
+              example: 'Successfully found contacts!'
             data:
-              type: array
-              items:
-                $ref: '../../components/schemas/contact.yaml'
-  '400':
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '../../components/schemas/contact.yaml'
+                page:
+                  type: integer
+                  example: 2
+                perPage:
+                  type: integer
+                  example: 4
+                totalItems:
+                  type: integer
+                  example: 6
+                totalPages:
+                  type: integer
+                  example: 2
+                hasPreviousPage:
+                  type: boolean
+                  example: true
+                hasNextPage:
+                  type: boolean
+                  example: false
+  '404':
     description: Bad request due to incorrect parameters
     content:
       application/json:
@@ -47,12 +68,10 @@ responses:
           properties:
             status:
               type: integer
-              example: 400
+              example: 404
             message:
               type: string
-              example: 'Invalid request parameters'
-  '401':
-    $ref: '../../components/responses/401.yaml'
+              example: 'No contacts found'
   '500':
     description: Internal server error
     content:

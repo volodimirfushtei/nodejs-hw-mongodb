@@ -1,0 +1,86 @@
+tags:
+  - Authentication
+summary: Register a new user
+description: Register a new user by providing a name, email, and password.
+operationId: registerUser
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - email
+          - password
+        properties:
+          name:
+            type: string
+            minLength: 3
+            maxLength: 20
+            description: 'The name of the user'
+            example: 'John Doe'
+          email:
+            type: string
+            format: email
+            description: 'The email address of the user'
+            example: 'john.doe@example.com'
+          password:
+            type: string
+            minLength: 8
+            description: 'The password for the user'
+            example: 'strongPassword123'
+responses:
+  '201':
+    description: Successfully registered a new user
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Successfully registered a user!
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: '60d21b4667d0d8992e610c85'
+                name:
+                  type: string
+                  example: 'John Doe'
+                email:
+                  type: string
+                  example: 'john.doe@example.com'
+                createdAt:
+                  type: string
+                  format: date-time
+                  example: '2024-12-24T12:34:56Z'
+                updatedAt:
+                  type: string
+                  format: date-time
+                  example: '2024-12-24T12:34:56Z'
+  '409':
+    description: Conflict - Email already exists
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 409
+            message:
+              type: string
+              example: 'Email in use'
+security: []

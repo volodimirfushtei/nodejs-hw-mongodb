@@ -1,0 +1,68 @@
+tags:
+  - Authentication
+summary: Login to the database
+description: Login an existing user by providing email and password.
+operationId: loginUser
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+            description: 'The email address of the user'
+            example: 'john.doe@example.com'
+          password:
+            type: string
+            description: 'The password for the user'
+            example: 'password123'
+responses:
+  '200':
+    description: Successfully logged in the user
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully logged in the user!'
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  description: 'The access token generated for the authenticated user'
+                  example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjBkMjFiNDY2N2QwZDg5OTJlNjEwYzg1IiwiaWF0IjoxNjY5MTM3Mzg0fQ.Q0iFzN1jm73mjAwbK4qpkT1S0W0McpmuYXeK-Dp1BRM'
+  '401':
+    description: Unauthorized - Incorrect email or password
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: 'Invalid email or password'

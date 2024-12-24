@@ -1,0 +1,33 @@
+type: object
+required:
+  - name
+  - email
+  - password
+properties:
+  _id:
+    type: string
+    description: 'Unique identifier for the user'
+    example: '60d21b4667d0d8992e610c85'
+  name:
+    type: string
+    description: 'The name of the user'
+    example: 'John Doe'
+  email:
+    type: string
+    format: email
+    description: 'The email address of the user'
+    example: 'john.doe@example.com'
+  password:
+    type: string
+    description: 'The password for the user (not exposed in API responses)'
+    example: 'strongPassword123'
+  createdAt:
+    type: string
+    format: date-time
+    description: 'The date when the user was created'
+    example: '2024-12-24T12:34:56Z'
+  updatedAt:
+    type: string
+    format: date-time
+    description: 'The date when the user was last updated'
+    example: '2024-12-24T12:34:56Z'
