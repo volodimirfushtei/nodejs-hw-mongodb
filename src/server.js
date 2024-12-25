@@ -8,7 +8,8 @@ import { initMongoConnection } from './db/initMongoConnection.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import path from 'node:path';
-import { swaggerDocs } from './middlewares/swaggerDocs.js';
+import * as fs from 'node:fs';
+import swaggerUI from 'swagger-ui-express';
 dotenv.config();
 
 export async function setupServer() {
@@ -21,8 +22,12 @@ export async function setupServer() {
     console.error('Failed to connect to MongoDB:', error);
     process.exit(1);
   }
+  const swaggerDocument = JSON.parse(
+    fs.readFileSync(path.resolve('docs/swagger.json'), 'utf-8'),
+  );
+  app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
   app.use('/photos', express.static(path.resolve('public/photos')));
-  app.use('/api-docs', swaggerDocs);
+
   app.use(cors());
   app.use(cookieParser());
   app.use(
