@@ -28,7 +28,7 @@ requestBody:
             type: string
             minLength: 8
             description: 'The password for the user'
-            example: 'strongPassword123'
+            example: password123
 responses:
   '201':
     description: Successfully registered a new user
