@@ -6,8 +6,6 @@ export function errorHandler(error, req, res, next) {
       .status(error.statusCode)
       .send({ status: error.statusCode, message: error.message });
   }
-
   console.error(error);
-
   res.status(500).send({ status: 500, message: error.message });
 }

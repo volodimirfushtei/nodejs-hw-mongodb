@@ -12,6 +12,9 @@
   "servers": [
     {
       "url": "http://127.0.0.1:3000"
+    },
+    {
+      "url": "https://nodejs-hw-mongodb-4-5h65.onrender.com"
     }
   ],
   "tags": [
@@ -36,9 +39,19 @@
         ],
         "parameters": [
           {
-            "name": "limit",
+            "name": "page",
             "in": "query",
-            "description": "The maximum number of contacts to retrieve",
+            "description": "The page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "description": "The number of contacts per page",
             "required": false,
             "schema": {
               "type": "integer",
@@ -46,13 +59,33 @@
             }
           },
           {
-            "name": "offset",
+            "name": "sortBy",
             "in": "query",
-            "description": "The number of contacts to skip for pagination",
+            "description": "Field to sort by (e.g., name, email, phoneNumber)",
             "required": false,
             "schema": {
-              "type": "integer",
-              "example": 0
+              "type": "string",
+              "example": "name"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "description": "Order to sort by (asc or desc)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "asc"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "description": "Filters to apply to the contacts list (e.g., type=work)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "type=work"
             }
           }
         ],
@@ -79,7 +112,8 @@
                           "type": "array",
                           "items": {
                             "$ref": "#/components/schemas/contact"
-                          }
+                          },
+                          "example": []
                         },
                         "page": {
                           "type": "integer",
@@ -112,25 +146,8 @@
               }
             }
           },
-          "404": {
-            "description": "Bad request due to incorrect parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 404
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "No contacts found"
-                    }
-                  }
-                }
-              }
-            }
+          "401": {
+            "$ref": "#/components/responses/401"
           },
           "500": {
             "description": "Internal server error",
@@ -173,6 +190,7 @@
                 "type": "object",
                 "required": [
                   "name",
+                  "phoneNumber",
                   "contactType"
                 ],
                 "properties": {
@@ -374,6 +392,11 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "email",
+                  "isFavourite",
+                  "photo"
+                ],
                 "properties": {
                   "name": {
                     "type": "string",
@@ -387,6 +410,7 @@
                   },
                   "email": {
                     "type": "string",
+                    "format": "email",
                     "description": "The updated email address of the contact",
                     "example": "messy.updated@gmail.com"
                   },
@@ -463,6 +487,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -491,25 +518,9 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "Successfully deleted the contact",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Contact deleted successfully!"
-                    }
-                  }
-                }
-              }
-            }
+            "content": {}
           },
           "401": {
             "$ref": "#/components/responses/401"
@@ -533,6 +544,9 @@
                 }
               }
             }
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -782,23 +796,7 @@
         "responses": {
           "204": {
             "description": "Successfully logged out the user",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status",
-                    "message"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 204
-                    }
-                  }
-                }
-              }
-            }
+            "content": {}
           },
           "400": {
             "description": "Bad request - Invalid or missing tokens",
@@ -876,48 +874,17 @@
         "tags": [
           "Authentication"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "email",
-                  "password"
-                ],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "The email address of the user",
-                    "example": "john.doe@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "description": "The password for the user",
-                    "example": "password123"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
-          "201": {
-            "description": "Successfully refreshed the session and access token",
+          "200": {
+            "description": "Successfully refreshed a session!",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
                   "properties": {
                     "status": {
                       "type": "integer",
-                      "example": 201
+                      "example": 200
                     },
                     "message": {
                       "type": "string",
@@ -928,8 +895,7 @@
                       "properties": {
                         "accessToken": {
                           "type": "string",
-                          "description": "The new access token for the authenticated user",
-                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjBkMjFiNDY2N2QwZDg5OTJlNjEwYzg1IiwiaWF0IjoxNjY5MTM3Mzg0fQ.Q0iFzN1jm73mjAwbK4qpkT1S0W0McpmuYXeK-Dp1BRM"
+                          "description": "The new access token for the authenticated user"
                         }
                       }
                     }

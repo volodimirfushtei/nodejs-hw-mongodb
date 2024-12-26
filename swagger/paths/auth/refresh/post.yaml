@@ -6,39 +6,17 @@ post:
     - bearerAuth: []
   tags:
     - Authentication
-  requestBody:
-    content:
-      application/json:
-        schema:
-          type: object
-          required:
-            - email
-            - password
-          properties:
-            email:
-              type: string
-              format: email
-              description: 'The email address of the user'
-              example: 'john.doe@example.com'
-            password:
-              type: string
-              description: 'The password for the user'
-              example: 'password123'
   responses:
-    '201':
-      description: Successfully refreshed the session and access token
+    '200':
+      description: Successfully refreshed a session!
       content:
         application/json:
           schema:
             type: object
-            required:
-              - status
-              - message
-              - data
             properties:
               status:
                 type: integer
-                example: 201
+                example: 200
               message:
                 type: string
                 example: 'Successfully refreshed a session!'
@@ -48,7 +26,6 @@ post:
                   accessToken:
                     type: string
                     description: 'The new access token for the authenticated user'
-                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjBkMjFiNDY2N2QwZDg5OTJlNjEwYzg1IiwiaWF0IjoxNjY5MTM3Mzg0fQ.Q0iFzN1jm73mjAwbK4qpkT1S0W0McpmuYXeK-Dp1BRM'
     '400':
       description: Bad request - Missing session or refresh token
       content:

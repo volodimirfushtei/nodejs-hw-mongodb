@@ -41,13 +41,6 @@ parameters:
     schema:
       type: string
       example: 'type=work'
-  - name: userId
-    in: query
-    description: 'The ID of the authenticated user'
-    required: true
-    schema:
-      type: string
-      example: 'user-1234'
 responses:
   '200':
     description: Successfully retrieved contacts

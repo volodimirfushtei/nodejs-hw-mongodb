@@ -9,17 +9,7 @@ post:
   responses:
     '204':
       description: Successfully logged out the user
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - status
-              - message
-            properties:
-              status:
-                type: integer
-                example: 204
+      content: {}
     '400':
       description: Bad request - Invalid or missing tokens
       content:

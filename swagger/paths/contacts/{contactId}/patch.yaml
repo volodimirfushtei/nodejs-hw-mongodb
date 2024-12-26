@@ -18,10 +18,6 @@ requestBody:
     multipart/form-data:
       schema:
         type: object
-        required:
-          - email
-          - isFavourite
-          - photo
         properties:
           name:
             type: string

@@ -19,6 +19,3 @@ export async function uploadToCloudinary(filePath) {
     throw error;
   }
 }
-console.log(process.env.CLOUDINARY_CLOUD_NAME);
-console.log(process.env.CLOUDINARY_API_KEY);
-console.log(process.env.CLOUDINARY_API_SECRET);
