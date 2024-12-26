@@ -18,6 +18,10 @@ requestBody:
     multipart/form-data:
       schema:
         type: object
+        required:
+          - email
+          - isFavourite
+          - photo
         properties:
           name:
             type: string
@@ -29,6 +33,7 @@ requestBody:
             example: '1256445655'
           email:
             type: string
+            format: email
             description: 'The updated email address of the contact'
             example: 'messy.updated@gmail.com'
           isFavourite:
@@ -80,3 +85,5 @@ responses:
               example: 'Invalid data provided for updating the contact'
   '401':
     $ref: ../../../components/responses/401.yaml
+  '500':
+    $ref: ../../../components/responses/500.yaml

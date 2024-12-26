@@ -12,6 +12,7 @@ requestBody:
         type: object
         required:
           - name
+          - phoneNumber
           - contactType
         properties:
           name:

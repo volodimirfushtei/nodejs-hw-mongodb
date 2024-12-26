@@ -6,20 +6,48 @@ description: 'Retrieve a list of all contacts for the authenticated user'
 security:
   - bearerAuth: []
 parameters:
-  - name: limit
+  - name: page
     in: query
-    description: 'The maximum number of contacts to retrieve'
+    description: 'The page number for pagination'
+    required: false
+    schema:
+      type: integer
+      example: 1
+  - name: perPage
+    in: query
+    description: 'The number of contacts per page'
     required: false
     schema:
       type: integer
       example: 10
-  - name: offset
+  - name: sortBy
     in: query
-    description: 'The number of contacts to skip for pagination'
+    description: 'Field to sort by (e.g., name, email, phoneNumber)'
     required: false
     schema:
-      type: integer
-      example: 0
+      type: string
+      example: 'name'
+  - name: sortOrder
+    in: query
+    description: 'Order to sort by (asc or desc)'
+    required: false
+    schema:
+      type: string
+      example: 'asc'
+  - name: filters
+    in: query
+    description: 'Filters to apply to the contacts list (e.g., type=work)'
+    required: false
+    schema:
+      type: string
+      example: 'type=work'
+  - name: userId
+    in: query
+    description: 'The ID of the authenticated user'
+    required: true
+    schema:
+      type: string
+      example: 'user-1234'
 responses:
   '200':
     description: Successfully retrieved contacts
@@ -41,6 +69,7 @@ responses:
                   type: array
                   items:
                     $ref: '../../components/schemas/contact.yaml'
+                  example: []
                 page:
                   type: integer
                   example: 2
@@ -59,19 +88,8 @@ responses:
                 hasNextPage:
                   type: boolean
                   example: false
-  '404':
-    description: Bad request due to incorrect parameters
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            status:
-              type: integer
-              example: 404
-            message:
-              type: string
-              example: 'No contacts found'
+  '401':
+    $ref: ../../components/responses/401.yaml
   '500':
     description: Internal server error
     content:
