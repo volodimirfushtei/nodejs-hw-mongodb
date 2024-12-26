@@ -34,16 +34,16 @@ export async function getContactsController(req, res) {
     data: contacts,
   });
 }
-export async function getContactsByIdController(req, res, next) {
-  const { _id } = req.params;
+export async function getContactsByIdController(req, res) {
+  const { contactId } = req.params;
 
-  const contact = await getContactById(_id);
+  const contact = await getContactById(contactId);
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
   res.status(200).send({
     status: 200,
-    message: `Successfully found contact with id ${_id}`,
+    message: `Successfully found contact with id ${contactId}`,
     data: contact,
   });
 }

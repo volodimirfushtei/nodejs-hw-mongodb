@@ -31,7 +31,6 @@ responses:
               type: string
               example: Successfully found contact with id 67698dcab119f87bc7eee931
             data:
-              type: object
               $ref: ../../../components/schemas/contact.yaml
   '401':
     $ref: '../../../components/responses/401.yaml'
@@ -44,6 +43,7 @@ responses:
           required:
             - status
             - message
+            - data
           properties:
             status:
               type: integer
@@ -51,5 +51,8 @@ responses:
             message:
               type: string
               example: Contact not found
+            data:
+              type: object
+              example: {}
   '500':
     $ref: ../../../components/responses/500.yaml

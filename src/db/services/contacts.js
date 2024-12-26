@@ -34,8 +34,8 @@ export async function getAllContacts({
   };
 }
 
-export async function getContactById(contactId, userId) {
-  const contact = await MyContacts.findOne({ _id: contactId, userId });
+export function getContactById(contactId, userId) {
+  const contact = MyContacts.findById(contactId);
   return contact;
 }
 export function createContact(contact) {
