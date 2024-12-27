@@ -28,11 +28,14 @@ export async function setupServer() {
   app.use(
     '/api-docs',
     swaggerUI.serve,
-    swaggerUI.setup(swaggerDocument, { withCredentials: true }),
+    swaggerUI.setup(swaggerDocument, {
+      withCredentials: true,
+      persistAuthorization: true,
+    }),
   );
   app.use('/photos', express.static(path.resolve('public/photos')));
 
-  app.use(cors());
+  app.use(cors({ credentials: true }));
   app.use(cookieParser());
   app.use(
     pino({
