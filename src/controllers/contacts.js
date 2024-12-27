@@ -16,7 +16,7 @@ export async function getContactsController(req, res) {
   const { sortBy, sortOrder } = parseSortParams(req.query);
   const filters = parseFilterParams(req.query);
 
-  console.log({ sortBy, sortOrder });
+  console.log({ sortBy, sortOrder, filters });
   const contacts = await getAllContacts({
     page,
     perPage,
@@ -50,7 +50,13 @@ export async function getContactsByIdController(req, res) {
 
 export async function createContactController(req, res) {
   console.log('Received request:', req.body);
-
+  const { name, phoneNumber, contactType } = req.body;
+  if (!name || !phoneNumber || !contactType) {
+    return res.status(400).send({
+      status: 400,
+      message: 'Bad request: error required fields',
+    });
+  }
   let photo = null;
   if (req.file) {
     const tmpFilePath = req.file.path;

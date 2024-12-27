@@ -61,7 +61,7 @@
           {
             "name": "sortBy",
             "in": "query",
-            "description": "Field to sort by (e.g., name, email, phoneNumber)",
+            "description": "Field to sort by (name, email, phoneNumber)",
             "required": false,
             "schema": {
               "type": "string",
@@ -79,19 +79,60 @@
             }
           },
           {
-            "name": "filters",
+            "name": "name",
             "in": "query",
-            "description": "Filters to apply to the contacts list (e.g., type=work)",
+            "description": "Filter by name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phoneNumber",
+            "in": "query",
+            "description": "Filter by phone number",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Filter by email address",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "contactType",
+            "in": "query",
+            "description": "Filter by contact type",
             "required": false,
             "schema": {
               "type": "string",
-              "example": "type=work"
+              "enum": [
+                "work",
+                "home",
+                "personal"
+              ]
+            }
+          },
+          {
+            "name": "isFavourite",
+            "in": "query",
+            "description": "Filter by true or false",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "example": true
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved contacts",
+            "description": "Successfully found contacts!",
             "content": {
               "application/json": {
                 "schema": {
@@ -258,6 +299,29 @@
                     },
                     "data": {
                       "$ref": "#/components/schemas/contact"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: error required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "message": {
+                      "type": "string"
                     }
                   }
                 }
@@ -482,6 +546,25 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Contact not found or doesn't belong to this user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -871,14 +954,7 @@
         "required": [
           "name",
           "phoneNumber",
-          "email",
-          "isFavourite",
-          "contactType",
-          "userId",
-          "photo",
-          "_id",
-          "createdAt",
-          "updatedAt"
+          "contactType"
         ],
         "properties": {
           "name": {

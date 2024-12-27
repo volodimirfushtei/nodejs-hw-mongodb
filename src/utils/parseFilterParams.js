@@ -1,11 +1,26 @@
-export function parseFilterParams(query) {
-  const { type: contactType, isFavourite } = query;
+function parseFilterParams(query) {
   const filters = {};
-  if (contactType) {
-    filters.contactType = contactType;
+
+  if (query.name) {
+    filters.name = { $regex: query.name, $options: 'i' };
   }
-  if (isFavourite !== undefined) {
-    filters.isFavourite = isFavourite === 'true';
+
+  if (query.phoneNumber) {
+    filters.phoneNumber = query.phoneNumber;
   }
+
+  if (query.email) {
+    filters.email = query.email;
+  }
+
+  if (query.isFavourite) {
+    filters.isFavourite = query.isFavourite === 'true';
+  }
+
+  if (query.contactType) {
+    filters.contactType = query.contactType;
+  }
+
   return filters;
 }
+export { parseFilterParams };

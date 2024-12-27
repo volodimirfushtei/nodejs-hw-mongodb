@@ -2,14 +2,7 @@ type: object
 required:
   - name
   - phoneNumber
-  - email
-  - isFavourite
   - contactType
-  - userId
-  - photo
-  - _id
-  - createdAt
-  - updatedAt
 properties:
   name:
     type: string

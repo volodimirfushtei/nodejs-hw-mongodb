@@ -22,7 +22,7 @@ parameters:
       example: 10
   - name: sortBy
     in: query
-    description: 'Field to sort by (e.g., name, email, phoneNumber)'
+    description: 'Field to sort by (name, email, phoneNumber)'
     required: false
     schema:
       type: string
@@ -34,16 +34,44 @@ parameters:
     schema:
       type: string
       example: 'asc'
-  - name: filters
+  - name: name
     in: query
-    description: 'Filters to apply to the contacts list (e.g., type=work)'
+    description: 'Filter by name'
     required: false
     schema:
       type: string
-      example: 'type=work'
+  - name: phoneNumber
+    in: query
+    description: 'Filter by phone number'
+    required: false
+    schema:
+      type: string
+  - name: email
+    in: query
+    description: 'Filter by email address'
+    required: false
+    schema:
+      type: string
+  - name: contactType
+    in: query
+    description: 'Filter by contact type'
+    required: false
+    schema:
+      type: string
+      enum:
+        - work
+        - home
+        - personal
+  - name: isFavourite
+    in: query
+    description: 'Filter by true or false'
+    required: false
+    schema:
+      type: boolean
+      example: true
 responses:
   '200':
-    description: Successfully retrieved contacts
+    description: 'Successfully found contacts!'
     content:
       application/json:
         schema:
@@ -82,7 +110,7 @@ responses:
                   type: boolean
                   example: false
   '401':
-    $ref: ../../components/responses/401.yaml
+    $ref: '../../components/responses/401.yaml'
   '500':
     description: Internal server error
     content:
