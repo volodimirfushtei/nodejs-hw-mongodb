@@ -22,7 +22,7 @@ requestBody:
           name:
             type: string
             description: 'The updated name of the contact'
-            example: 'Messy Updated'
+            example: 'Updated name of the contact'
           phoneNumber:
             type: string
             description: 'The updated phone number of the contact'

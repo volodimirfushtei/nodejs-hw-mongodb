@@ -25,7 +25,11 @@ export async function setupServer() {
   const swaggerDocument = JSON.parse(
     fs.readFileSync(path.resolve('docs/swagger.json'), 'utf-8'),
   );
-  app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+  app.use(
+    '/api-docs',
+    swaggerUI.serve,
+    swaggerUI.setup(swaggerDocument, { withCredentials: true }),
+  );
   app.use('/photos', express.static(path.resolve('public/photos')));
 
   app.use(cors());

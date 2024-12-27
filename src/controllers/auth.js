@@ -55,6 +55,7 @@ export async function logoutController(req, res) {
 }
 export async function refreshController(req, res) {
   const { sessionId, refreshToken } = req.cookies;
+  console.log(sessionId, refreshToken);
   if (!sessionId || !refreshToken) {
     throw new Error('Missing session or refresh token');
   }

@@ -392,16 +392,11 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "isFavourite",
-                  "photo"
-                ],
                 "properties": {
                   "name": {
                     "type": "string",
                     "description": "The updated name of the contact",
-                    "example": "Messy Updated"
+                    "example": "Updated name of the contact"
                   },
                   "phoneNumber": {
                     "type": "string",
