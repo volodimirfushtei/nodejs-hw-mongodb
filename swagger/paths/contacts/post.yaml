@@ -79,6 +79,13 @@ responses:
               example: 400
             message:
               type: string
+              example: Bad request
+            data:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: 'Missing required field'
   '401':
     $ref: '../../components/responses/401.yaml'
   '500':

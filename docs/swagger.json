@@ -321,7 +321,17 @@
                       "example": 400
                     },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Bad request"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Missing required field"
+                        }
+                      }
                     }
                   }
                 }
