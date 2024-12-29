@@ -11,7 +11,7 @@ tags:
     description: Operation with contacts.
 servers:
   - url: http://127.0.0.1:3000
-  - url: https://nodejs-hw-mongodb-4-5h65.onrender.com
+  - url: https://nodejs-hw-mongodb-5-sdwh.onrender.com
 paths:
   /contacts:
     get:

@@ -14,7 +14,7 @@
       "url": "http://127.0.0.1:3000"
     },
     {
-      "url": "https://nodejs-hw-mongodb-4-5h65.onrender.com"
+      "url": "https://nodejs-hw-mongodb-5-sdwh.onrender.com"
     }
   ],
   "tags": [
@@ -76,33 +76,6 @@
             "schema": {
               "type": "string",
               "example": "asc"
-            }
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "Filter by name",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "phoneNumber",
-            "in": "query",
-            "description": "Filter by phone number",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "email",
-            "in": "query",
-            "description": "Filter by email address",
-            "required": false,
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -964,7 +937,9 @@
         "required": [
           "name",
           "phoneNumber",
-          "contactType"
+          "contactType",
+          "userId",
+          "_id"
         ],
         "properties": {
           "name": {

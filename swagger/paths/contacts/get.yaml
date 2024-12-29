@@ -34,24 +34,6 @@ parameters:
     schema:
       type: string
       example: 'asc'
-  - name: name
-    in: query
-    description: 'Filter by name'
-    required: false
-    schema:
-      type: string
-  - name: phoneNumber
-    in: query
-    description: 'Filter by phone number'
-    required: false
-    schema:
-      type: string
-  - name: email
-    in: query
-    description: 'Filter by email address'
-    required: false
-    schema:
-      type: string
   - name: contactType
     in: query
     description: 'Filter by contact type'
